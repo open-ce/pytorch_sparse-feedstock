@@ -13,8 +13,8 @@ build:
   number: 1
   skip: true  # [win]
   script:
-    - export FORCE_CUDA="1"    # [linux64 and cudatoolkit == 'cuda']
-    - export CC="$GCC"   # [linux64 and cudatoolkit == 'cuda']
+    - export FORCE_CUDA="1"    # [build_type == 'cuda']
+    - export CC="$GCC"   # [build_type == 'cuda']
     - {{ PYTHON }} -m pip install . -vv
 
 requirements:
