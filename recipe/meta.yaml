@@ -13,16 +13,18 @@ build:
   number: 1
   skip: true  # [win]
   script:
-    - export FORCE_CUDA="1"    # [linux64 and cudatoolkit not in (undefined, 'None')]
-    - export CC="$GCC"   # [linux64 and cudatoolkit not in (undefined, 'None')]
+    - export FORCE_CUDA="1"    # [linux64 and cudatoolkit == 'cuda']
+    - export CC="$GCC"   # [linux64 and cudatoolkit == 'cuda']
     - {{ PYTHON }} -m pip install . -vv
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - cudatoolkit {{ cudatoolkit }}     # [build_type == 'cuda']
   host:
     - python {{ python }}
+    - _pytorch_select  {{ pytorch_select_version }}
     - pytorch-base {{ pytorch }}
     - pip
     - setuptools {{ setuptools }}
@@ -30,6 +32,8 @@ requirements:
     - scipy {{ scipy }}
   run:
     - python {{ python }}
+    - cudatoolkit {{ cudatoolkit }}     # [build_type == 'cuda']
+    - _pytorch_select  {{ pytorch_select_version }}
     - pytorch-base {{ pytorch }}
     - pytest
     - pytest-cov
