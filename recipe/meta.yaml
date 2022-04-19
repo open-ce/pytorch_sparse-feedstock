@@ -11,34 +11,36 @@ source:
 
 build:
   number: 1
+  string: {{ build_type }}_py{{ python | replace(".", "") }}_{{ PKG_BUILDNUM }} #[build_type == 'cpu']
+  string: {{ build_type }}{{ cudatoolkit | replace(".*", "") }}_py{{ python | replace(".", "") }}_{{ PKG_BUILDNUM }} #[build_type == 'cuda']
   skip: true  # [win]
   script:
-    - export FORCE_CUDA="1"    # [linux64 and cuda_compiler_version not in (undefined, 'None')]
-    - export CC="$GCC"   # [linux64 and cuda_compiler_version not in (undefined, 'None')]
+    - export FORCE_CUDA="1"    # [build_type == 'cuda']
+    - export CC="$GCC"   # [build_type == 'cuda']
     - {{ PYTHON }} -m pip install . -vv
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - {{ compiler('cuda') }}  # [cuda_compiler_version not in (undefined, 'None')]
+    - cudatoolkit {{ cudatoolkit }}     # [build_type == 'cuda']
   host:
-    - python
+    - python {{ python }}
+    - _pytorch_select  {{ pytorch_select_version }}
+    - pytorch-base {{ pytorch }}
     - pip
-    - pytorch-gpu  # [cuda_compiler_version not in (undefined, 'None')]
-    - pytorch-cpu  # [osx or cuda_compiler_version in (undefined, 'None')]
-    - setuptools
+    - setuptools {{ setuptools }}
     - pytest-runner
-    - scipy
+    - scipy {{ scipy }}
   run:
-    - python
-    - pytorch
-    - {{ pin_compatible('pytorch-gpu') }}  # [cuda_compiler_version not in (undefined, 'None')]
-    - {{ pin_compatible('pytorch-cpu') }}  # [osx or cuda_compiler_version in (undefined, 'None')]
+    - python {{ python }}
+    - cudatoolkit {{ cudatoolkit }}     # [build_type == 'cuda']
+    - _pytorch_select  {{ pytorch_select_version }}
+    - pytorch-base {{ pytorch }}
     - pytest
     - pytest-cov
-    - scipy
-    - pytorch_scatter
+    - scipy {{ scipy }}
+    - pytorch_scatter {{ pytorch_scatter }}
 
 test:
   imports:
@@ -53,7 +55,4 @@ about:
 
 extra:
   recipe-maintainers:
-    - mxr-conda
-    - rluria14
-    - oblute
-    - ndmaxar
+    - open-ce/open-ce-dev-team
