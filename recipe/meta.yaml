@@ -25,6 +25,7 @@ requirements:
     - {{ compiler('cxx') }}
     - cudatoolkit {{ cudatoolkit }}     # [build_type == 'cuda']
   host:
+    - cudatoolkit {{ cudatoolkit }}     # [build_type == 'cuda']
     - python {{ python }}
     - _pytorch_select  {{ pytorch_select_version }}
     - pytorch-base {{ pytorch }}
